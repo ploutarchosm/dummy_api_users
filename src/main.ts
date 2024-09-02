@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { json } from 'body-parser';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { HttpExceptionFilter } from './http-exception-filter';
+import { useContainer } from 'class-validator';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 (async () => {
@@ -13,6 +15,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
     },
   );
 
+  const httpExceptionFilter = application.get(HttpExceptionFilter);
   application.disable('x-powered-by');
   application.setGlobalPrefix('api/v1');
 
@@ -24,6 +27,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
   const document = SwaggerModule.createDocument(application, swaggerConfig);
   SwaggerModule.setup('swagger', application, document);
+
+  application.useGlobalFilters(httpExceptionFilter);
+
+  useContainer(application.select(AppModule), {
+    fallback: true,
+    fallbackOnErrors: true,
+  });
 
   application.use(
     json({
