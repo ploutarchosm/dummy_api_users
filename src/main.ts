@@ -6,7 +6,6 @@ import { HttpExceptionFilter } from './http-exception-filter';
 import { useContainer } from 'class-validator';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-
 (async () => {
   const application = await NestFactory.create<NestExpressApplication>(
     AppModule,
@@ -16,36 +15,35 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
     },
   );
 
+  const httpExceptionFilter = application.get(HttpExceptionFilter);
+  application.disable('x-powered-by');
+  application.setGlobalPrefix('api/v1');
 
-    const httpExceptionFilter = application.get(HttpExceptionFilter);
-    application.disable('x-powered-by');
-    application.setGlobalPrefix('api/v1');
-
-    const swaggerConfig = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API developed For Users')
     .setVersion('1.0')
     .build();
 
-    const document = SwaggerModule.createDocument(application, swaggerConfig);
-    SwaggerModule.setup('swagger', application, document);
+  const document = SwaggerModule.createDocument(application, swaggerConfig);
+  SwaggerModule.setup('swagger', application, document);
 
-    application.useGlobalFilters(httpExceptionFilter);
+  application.useGlobalFilters(httpExceptionFilter);
 
-    useContainer(application.select(AppModule), {
-      fallback: true,
-      fallbackOnErrors: true,
-    });
+  useContainer(application.select(AppModule), {
+    fallback: true,
+    fallbackOnErrors: true,
+  });
 
-    application.use(
-      json({
-        limit: '250mb',
-      }),
-    );
+  application.use(
+    json({
+      limit: '250mb',
+    }),
+  );
 
-    application.enableCors();
+  application.enableCors();
 
-    await application.listen(3000, () => {
-      console.log('Application is listening at port: 3000');
-    });
+  await application.listen(3000, () => {
+    console.log('Application is listening at port: 3000');
+  });
 })();
