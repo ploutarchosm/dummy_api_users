@@ -1,4 +1,4 @@
-import { flatten, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as MOCKED_DATA from '../data/MOCK_DATA.json';
 import { IUser, UserRole, UserStatus } from './users.model';
 import { isArray } from 'lodash';
@@ -42,14 +42,6 @@ export class UsersService {
               });
             }, 100);
           });
-      }
-
-
-    async count() {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(this.data.length);
-            }, 100);
-          });
     }
+
 }
