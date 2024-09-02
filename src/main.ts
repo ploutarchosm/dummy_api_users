@@ -45,7 +45,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
     application.enableCors();
 
-    await application.listen(7000, () => {
-      console.log('Application is listening at port: 7000');
+    await application.listen(3000, () => {
+      console.log('Application is listening at port: 3000');
     });
 })();
